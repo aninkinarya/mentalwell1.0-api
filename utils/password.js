@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Fungsi untuk hashing password
 const hashPassword = async (password) => {

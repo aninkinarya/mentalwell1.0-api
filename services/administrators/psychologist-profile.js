@@ -1,7 +1,7 @@
 const { supabase } = require('../../config/database')
 const { uploadPhotoToSupabase } = require('../../config/uploadFile');
 const { ValidationError } = require('../../utils/errors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const addPsychologist = async (userData, psychologistData, topics = [], schedules = [], profileImageFile) => {
   const {
