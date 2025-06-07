@@ -1,0 +1,78 @@
+const { createArticle, editArticle } = require('../../services/administrators/article');
+const { articleSchema, updateArticleSchema } = require('../../utils/validation')
+
+const postArticle = async (request, h) => {
+    try{
+        const payload = {...request.payload}
+        const file = payload.image._data? payload.image : null;
+
+        const allowedFields = [ 'title', 'content']
+        const plainPayload = {}
+        for (const key of allowedFields){
+            if (payload[key] !== undefined )
+                plainPayload[key] = payload[key]
+        }
+
+
+        const { error } = articleSchema.validate(plainPayload)
+        if (error) {
+            return h.response({
+                status: 'fail',
+                message: error.details[0].message
+            }).code(400);
+        }
+
+        const postedArticle = await createArticle(plainPayload, file)
+
+        return h.response({
+            status: 'success',
+            message: 'Artikel berhasil dibuat',
+            data: postedArticle
+        }).code(200);
+
+    } catch (err){
+        return h.response({
+            status: 'fail',
+            message: 'Gagal membuat artikel'
+        }).code(500);
+    }
+}
+
+const updateArticle = async (request, h) => {
+    try {
+      const articleId = request.params.id;
+      const payload = { ...request.payload };
+      const file = payload.image?._data ? payload.image : null;
+  
+      const allowedFields = ['title', 'content'];
+      const plainPayload = {};
+      for (const key of allowedFields) {
+        if (payload[key] !== undefined)
+            plainPayload[key] = payload[key];
+      }
+  
+      const { error } = updateArticleSchema.validate(plainPayload);
+      if (error) {
+        return h.response({
+          status: 'fail',
+          message: error.details[0].message,
+        }).code(400);
+      }
+  
+      const updated = await editArticle(articleId, plainPayload, file);
+  
+      return h.response({
+        status: 'success',
+        message: 'Artikel berhasil diperbarui',
+        data: updated,
+      }).code(200);
+    } catch (err) {
+      console.error('❌ updateArticle error:', err.message);
+      return h.response({
+        status: 'fail',
+        message: 'Gagal memperbarui artikel',
+      }).code(500);
+    }
+  };
+
+module.exports = { postArticle, updateArticle };

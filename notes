@@ -1,0 +1,49 @@
+belum betulin handler change statuspayment
+masih bingung roomchat scheduled
+belum bikin routes
+kayaknya admin harusnya bisa edit info psikolog
+admin bisa liat pasien
+harusnya approve realtime chat tuh cepet, maks 5 min
+kalo udah tf dan tiba tiba conflict validation error gimana
+
+counseling chatnow patient
+ubah status failed if counseling time is apparently overlap & psychologist suddenly unavailable
+if it doesnt, change psychologist availability to unavailable
+
+counseling changepaymentstatus for chatnow
+case 1 : unvalid counseling - overlapped counseling & unavailable psychologist
+    if status failed (payment status ofc still 'waiting'), admin should check the payment proof
+    if payment apparently was success, payed, admin should refund the money and change payment status to refunded, and payment_note should be changed automated with like 'the payment has been refunded into your bank account' or sumn
+    if payment proof is fake, admin should update payment_status to rejected and update the reason manually like 'doesnt receive the mount of money at time and from your bank account number blah blah"
+    if the counseling was valid, theres no error, and counseling status is still waiting, admin should check payment proof, if it approved, the program needs automatically adding the start_time by 'now' time using dayjs asia/jakarta to the db, and then calculate end time by adding starttime with 1 hour.
+case 2 : valid counseling, unvalid payment proof
+    if status is waiting, and payment is rejected change availability
+case 3 : valid counseling valid payment proof
+    psychologist remains unavailable
+
+email
+send reminder email and whatsaap to patient and psychologist
+
+view counseling for admin
+should show the priority first. the waiting payment status and the earliest time is the priority, and it sorted from earliest to lastest
+and real time type access need to be checked firrst! (pior)
+make filterrrr based on payment status, psychologist name, and patient name
+
+admin adds psikolog
+campur sama add schedule
+
+bikin edit psikolog detail by admin
+
+reset password
+
+add chat room id untuk realtime anddddddddddddd schedule #pusink
+
+
+gabung view psikolog dan view psikolog schedule dari service pasien untuk view admin
+
+schedule weekly dan custom gausah dipisah, langsung schedule { ke array aja}
+
+
+schedule booked kalo conflict harus ttp masuk ke tabel counselings trus status counselingnya failed payment statusnya jadi waiting. 
+
+udah cron job convo id tinggal return ke details counseling

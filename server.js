@@ -1,0 +1,26 @@
+const Hapi = require('@hapi/hapi');
+const routes = require('./routes/index')
+const { startAutoUpdateCounselings } = require('./utils/autoUpdateStatus')
+
+const init = async () => {
+  const server = Hapi.server({
+    port: 3001,
+    host: 'localhost',
+    routes: {
+      cors: {
+        origin: ['*'],
+        credentials: true
+      },
+    },
+  });
+
+  server.route(routes);
+
+  await server.start();
+  startAutoUpdateCounselings();
+  console.log(`Server berjalan pada ${server.info.uri}`);
+
+};
+
+ 
+init();
