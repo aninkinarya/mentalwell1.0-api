@@ -489,7 +489,7 @@ const selectCounseling = async (counselingId) => {
 
     const detailedCounseling = {
         id: counseling.id,
-        conversation_id: counseling.conve,
+        conversation_id: counseling.conversation_id,
         psychologist_name: counseling.psychologists.users.name,
         psychologist_profpic: counseling.psychologists.users.profile_image,
         schedule_date: counseling.schedule_date,

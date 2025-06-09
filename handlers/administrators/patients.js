@@ -2,7 +2,7 @@ const { userProfile } = require('../../services/patients/profile');
 
 const getPatientProfile = async (request, h) => {
     try {
-        const userId = request.parmas.id;
+        const userId = request.params.id;
 
         const profile = await userProfile(userId);
 

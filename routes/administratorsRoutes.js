@@ -4,7 +4,7 @@ const { postArticle, updateArticle } = require('../handlers/administrators/artic
 const { getSelectedCounseling, updatePaymentStatus } = require('../handlers/administrators/counseling')
 const { getAllUsersCounselings, getAPsychologistCounselings, getAPatientCounselings } = require('../handlers/administrators/counseling-list')
 const { postPsychologist, putPsychologistInfo, getPsychologistDetails } = require('../handlers/administrators/psychologist-profile');
-const { getPsychologistList } = require('../handlers/administrators/psychologists-list');
+const { getPsychologistList, deletePsychologist } = require('../handlers/administrators/psychologists-list');
 const { getPsychologistSchedules } = require('../handlers/patient/psychologist-schedules');
 const { createSchedule, updateSchedule, removeSchedule } = require('../handlers/administrators/psychologists-schedules')
 const { getPatientProfile } = require('../handlers/administrators/patients')
@@ -228,10 +228,19 @@ const administratorsRoutes = [
         },
 
         handler: getPatientProfile
+    },
+
+    {
+        method: 'DELETE',
+        path: '/admin/psychologist/{id}',
+        options: {
+            pre: [
+                { method: requireAuth},
+                { method: authorizeRole (['admin'])},
+            ]
+        },
+        handler: deletePsychologist
     }
-
-
-    // bikin counseling berdasarkan psychologist, pake punyanya psychologist tapi request authnya diganti jadi params
 ]
 
 module.exports = administratorsRoutes;

@@ -47,3 +47,14 @@ schedule weekly dan custom gausah dipisah, langsung schedule { ke array aja}
 schedule booked kalo conflict harus ttp masuk ke tabel counselings trus status counselingnya failed payment statusnya jadi waiting. 
 
 udah cron job convo id tinggal return ke details counseling
+
+
+cek addreview dan delete psikolog by id + tambahhhhhhhHHHHHHHHHHHHH delete multiple psikolok yeah\\
+
+fitur logot lupak.
+
+#DELETE DIRI SNDIRI
+
+belum tambahin register dan search psikolog dipostman:VVVVVVV
+
+

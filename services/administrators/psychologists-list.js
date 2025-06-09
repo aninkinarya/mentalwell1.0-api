@@ -42,8 +42,61 @@ const allPsychologists = async () => {
   }));
 };
 
+const deleteAPsychologist = async (psychologistId) => {
+
+  const { data: userId, error: userError } = await supabase
+    .from('psychologists')
+    .select('user_id')
+    .eq('id', psychologistId)
+    .single();
+
+  if (userError) {
+    throw new Error('Gagal mendapatkan ID pengguna psikolog: ' + userError.message);
+  }
+
+  const { error } = await supabase
+    .from('psychologists')
+    .delete()
+    .eq('id', psychologistId);
+
+  if (error) {
+    throw new Error('Gagal menghapus psikolog: ' + error.message);
+  }
+
+  const { error: deleteUserError } = await supabase
+    .from('users')
+    .delete()
+    .eq('id', userId.user_id);
+
+  if (deleteUserError) {
+    throw new Error('Gagal menghapus pengguna psikolog: ' + deleteUserError.message);
+  }
+
+  return { message: 'Psikolog berhasil dihapus' };
+};
+
+const deleteMultiplePsychologists = async (psychologistIds) => {
+  if (!Array.isArray(psychologistIds) || psychologistIds.length === 0) {
+    throw new Error('ID psikolog tidak valid');
+  }
+
+  const { data: userIds, error: userError } = await supabase
+    .from('psychologists')
+    .select('user_id')
+    .in('id', psychologistIds);
+
+  if (userError) {
+    throw new Error('Gagal mendapatkan ID pengguna psikolog: ' + userError.message);
+  }
+
+  cons
+
+
+
+}
+
 
 
  
 
-module.exports = { allPsychologists };
+module.exports = { allPsychologists, deleteAPsychologist };
