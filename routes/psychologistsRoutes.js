@@ -1,6 +1,6 @@
 const { requireAuth, authorizeRole } = require('../config/auth');
 const { getPsychologistProfile, updatePsychologist, updateAvailability } = require('../handlers/psychologists/profile');
-const { getPatientsCounselings, getSelectedCounseling } = require('../handlers/psychologists/counseling')
+const { getPatientsCounselings, getSelectedCounseling, updateCounselingStatus } = require('../handlers/psychologists/counseling')
 
 const psychologistRoutes = [
     { // tested
@@ -65,6 +65,18 @@ const psychologistRoutes = [
             { method: authorizeRole(['psychologist']) }]
         },
         handler: getSelectedCounseling
+    },
+
+    {
+        method: 'PUT',
+        path: '/psychologist/counseling/{id}/status',
+        options: {
+          pre: [
+            { method: requireAuth },
+            { method: authorizeRole(['psychologist']) }
+          ]
+        },
+        handler: updateCounselingStatus
     }
 ];
 

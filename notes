@@ -49,6 +49,8 @@ schedule booked kalo conflict harus ttp masuk ke tabel counselings trus status c
 udah cron job convo id tinggal return ke details counseling
 
 
+######### 10 jun
+
 cek addreview dan delete psikolog by id + tambahhhhhhhHHHHHHHHHHHHH delete multiple psikolok yeah\\
 
 fitur logot lupak.
@@ -56,5 +58,7 @@ fitur logot lupak.
 #DELETE DIRI SNDIRI
 
 belum tambahin register dan search psikolog dipostman:VVVVVVV
+
+belum cek changecounseling status
 
 
