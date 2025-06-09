@@ -117,13 +117,11 @@ const searchPsychologists = async ({ name, topics }) => {
       bio,
       experience,
       availability,
+      price,
       users (
         name,
         profile_image,
         birthdate
-      ),
-      counselings (
-        review
       ),
       psychologists_topics (
         topic:topics (
@@ -138,20 +136,16 @@ const searchPsychologists = async ({ name, topics }) => {
   const formatResult = (list) =>
     list.map(p => ({
       id: p.id,
+      name: p.users?.name || null,
       bio: p.bio,
       experience: p.experience,
       availability: p.availability,
-      name: p.users?.name || null,
+      price: p.price || null,
       age: p.users?.birthdate
         ? calculateAge(p.users.birthdate)
         : null,
       topics: (p.psychologists_topics || []).map(t => t.topic),
       profile_image: p.users?.profile_image || null,
-      counselings: {
-        review: {
-          count: (p.counselings || []).filter(c => c.review !== null && c.review !== '').length
-        }
-      }
     }));
 
   let filteredAND = data;

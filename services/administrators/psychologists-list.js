@@ -42,6 +42,8 @@ const allPsychologists = async () => {
   }));
 };
 
+
+
  
 
 module.exports = { allPsychologists };
