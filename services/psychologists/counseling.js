@@ -121,17 +121,19 @@ const selectCounseling = async (counselingId) => {
 const changeCounselingStatus = async (counselingId, updatedStatus) => {
 
     const { data: status, error: statusError } = await supabase
-    .from('counslings')
+    .from('counselings')
     .select('status')
     .eq('id', counselingId)
     .single()
 
-    if (status.status.toLowerCase() === 'rejected' || status.status.toLowerCase() === 'rejected' ){
-        throw new ConflictError('Status sudah final, tidak dapat diubah kembali')
-    }
+    const currentStatus = statusData?.status?.toLowerCase();
 
-    if (status.status.toLowerCase() === 'waiting') {
-        throw new ValidationError('Konseling belum dimulai, belum bisa mengubah status konseling')
+    if (currentStatus === 'rejected' || currentStatus === 'finished') {
+        throw new ConflictError('Status sudah final, tidak dapat diubah kembali');
+    }
+    
+    if (currentStatus === 'waiting') {
+        throw new ValidationError('Konseling belum dimulai, belum bisa mengubah status konseling');
     }
 
     if (statusError){
@@ -146,9 +148,9 @@ const changeCounselingStatus = async (counselingId, updatedStatus) => {
     .update({status: updatedStatus})
     .select()
     .eq('id', counselingId)
-    .single()
+    .single();
 
-    if (counsError && !counsError.message,includes('multiple (or no) rows returned')){
+    if (counsError && !counsError.message.includes('multiple (or no) rows returned')){
         throw new Error('Terjadi kesalahan: ' + counsError.message)
     }
 
