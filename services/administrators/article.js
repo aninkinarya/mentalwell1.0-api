@@ -19,7 +19,7 @@ const createArticle = async (data, file) => {
      .single();
 
     if (error) {
-        throw new Error('Gagal membuat artikel: ') + error.message;
+        throw new Error('Gagal membuat artikel: ' + error.message);
     }
 
     return inserted;

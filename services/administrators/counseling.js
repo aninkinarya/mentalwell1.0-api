@@ -53,6 +53,7 @@ const selectCounseling = async (counselingId) => {
         payment_status: counseling.payment_status,
         payment_proof: counseling.payment_proof,
         payment_note: counseling.payment_note,
+        access_type: counseling.access_type,
         created_at: counseling.created_at
     }
 

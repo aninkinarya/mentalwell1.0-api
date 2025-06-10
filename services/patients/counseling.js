@@ -463,6 +463,7 @@ const selectCounseling = async (counselingId) => {
         end_time,
         status,
         payment_status,
+        payment_note,
         created_at,
         review,
         conversation_id,
@@ -496,6 +497,7 @@ const selectCounseling = async (counselingId) => {
         schedule_time: counseling.start_time.slice(0, 5) + '-' + counseling.end_time.slice(0, 5),
         status: counseling.status,
         payment_status: counseling.payment_status,
+        payment_note: counseling.payment_note || null,
         created_at: counseling.created_at,
         review: counseling.review
     }
