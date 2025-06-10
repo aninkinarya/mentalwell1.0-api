@@ -43,6 +43,7 @@ const allPsychologists = async () => {
 };
 
 const deleteAPsychologist = async (psychologistId) => {
+
   const { data: psy, error: userError } = await supabase
     .from('psychologists')
     .select('user_id')
@@ -55,42 +56,22 @@ const deleteAPsychologist = async (psychologistId) => {
 
   const userId = psy.user_id;
 
+  await supabase.from('psychologists_topics').delete().eq('psychologist_id', psychologistId);
+  await supabase.from('psychologist_weekly_availabilities').delete().eq('psychologist_id', psychologistId);
+  await supabase.from('psychologist_schedules').delete().eq('psychologist_id', psychologistId);
 
-  const deleteDependencies = async () => {
-    await supabase.from('psychologists_topics').delete().eq('psychologist_id', psychologistId);
-    await supabase.from('psychologist_weekly_availabilities').delete().eq('psychologist_id', psychologistId);
-    await supabase.from('psychologist_schedules').delete().eq('psychologist_id', psychologistId);
-    await supabase.from('counselings').delete().eq('psychologist_id', psychologistId);
-    await supabase.from('conversations').delete().eq('psychologist_id', psychologistId);
-  };
+  const { error: deactivateError } = await supabase
+    .from('users')
+    .update({ is_active: false })
+    .eq('id', userId);
 
-  try {
-    await deleteDependencies();
-
-    const { error: deletePsyError } = await supabase
-      .from('psychologists')
-      .delete()
-      .eq('id', psychologistId);
-
-    if (deletePsyError) {
-      throw new Error('Gagal menghapus psikolog: ' + deletePsyError.message);
-    }
-
-    const { error: deleteUserError } = await supabase
-      .from('users')
-      .delete()
-      .eq('id', userId);
-
-    if (deleteUserError) {
-      throw new Error('Gagal menghapus pengguna psikolog: ' + deleteUserError.message);
-    }
-
-    return { message: 'Psikolog dan pengguna berhasil dihapus' };
-
-  } catch (err) {
-    throw new Error('❌ deletePsychologist error: ' + err.message);
+  if (deactivateError) {
+    throw new Error('Gagal menonaktifkan akun psikolog: ' + deactivateError.message);
   }
+
+  return { message: 'Psikolog berhasil dinonaktifkan dan data jadwal/topik dihapus' };
 };
+
 
 
 const deleteMultiplePsychologists = async (psychologistIds) => {
