@@ -8,50 +8,20 @@ dayjs.extend(timezone);
 
 
 const allPsychologists = async () => {
-  const { data, error } = await supabase
-    .from('psychologists')
-    .select(`
-      id,
-      availability,
-      bio,
-      experience,
-      price,
-      users (
-        id,
-        name,
-        profile_image,
-        birthdate
-      ),
-      psychologist_weekly_availabilities (
-        id
-      ),
-      psychologist_schedules (
-        id
-      )
-    `);
-
+  const { data, error } = await supabase.rpc('get_all_psychologists');
   if (error) throw new Error('Gagal ambil data psikolog: ' + error.message);
 
-  const result = data.map(psych => {
-    const slots = psych.psychologist_weekly_availabilities + psych.psychologists_schedules || [];
-
-    const can_be_scheduled = slots.length > 0;
-    const can_chat_now = psych.availability === 'available';
-
-    return {
-      id: psych.id,
-      name: psych.users?.name || null,
-      age: psych.users?.birthdate
-        ? calculateAge(psych.users.birthdate)
-        : null,
-      profile_image: psych.users?.profile_image || null,
-      bio: psych.bio || null,
-      experience: psych.experience || null,
-      availability: psych.availability,
-      can_be_scheduled,
-      can_chat_now
-    };
-  });
+  const result = data.map(psych => ({
+    id: psych.id,
+    name: psych.name || null,
+    age: psych.age || null,
+    profile_image: psych.profile_image || null,
+    bio: psych.bio || null,
+    experience: psych.experience || null,
+    availability: psych.availability,
+    can_be_scheduled: psych.can_be_scheduled || false,
+    can_chat_now: psych.can_chat_now || false
+  }));
 
   result.sort((a, b) => {
     if (a.can_chat_now === b.can_chat_now) return 0;
@@ -60,7 +30,6 @@ const allPsychologists = async () => {
 
   return result;
 };
-
 
 
 const listDetailedPsychologits = async () => {
