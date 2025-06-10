@@ -20,6 +20,7 @@ const allPsychologists = async () => {
         profile_image
       )
     `)
+    .eq('users.is_active', true)
     .order('name', { referencedTable: 'users', ascending: true });
 
   if (error) {
