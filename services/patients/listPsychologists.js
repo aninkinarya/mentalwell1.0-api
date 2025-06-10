@@ -80,41 +80,22 @@ return formatted;
 
 const searchPsychologists = async ({ name, topics }) => {
   const { data, error } = await supabase
-    .from('psychologists')
-    .select(`
-      id,
-      bio,
-      experience,
-      availability,
-      price,
-      users (
-        name,
-        profile_image,
-        birthdate
-      ),
-      psychologists_topics (
-        topic:topics (
-          id,
-          name
-        )
-      )
-    `);
+    .from('searchable_psychologists')
+    .select('*');
 
   if (error) throw new Error('Gagal ambil data psikolog: ' + error.message);
 
   const formatResult = (list) =>
     list.map(p => ({
       id: p.id,
-      name: p.users?.name || null,
+      name: p.name || null,
       bio: p.bio,
       experience: p.experience,
       availability: p.availability,
       price: p.price || null,
-      age: p.users?.birthdate
-        ? calculateAge(p.users.birthdate)
-        : null,
-      topics: (p.psychologists_topics || []).map(t => t.topic),
-      profile_image: p.users?.profile_image || null,
+      age: p.birthdate ? calculateAge(p.birthdate) : null,
+      topics: p.topics || [],
+      profile_image: p.profile_image || null,
     }));
 
   let filteredAND = data;
