@@ -62,7 +62,10 @@ const deleteAPsychologist = async (psychologistId) => {
 
   const { error: deactivateError } = await supabase
     .from('users')
-    .update({ is_active: false })
+    .update({ is_active: false,
+      email: null,
+      phone_number: null,
+     })
     .eq('id', userId);
 
   if (deactivateError) {
