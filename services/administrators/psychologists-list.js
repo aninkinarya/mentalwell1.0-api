@@ -43,37 +43,55 @@ const allPsychologists = async () => {
 };
 
 const deleteAPsychologist = async (psychologistId) => {
-
-  const { data: userId, error: userError } = await supabase
+  const { data: psy, error: userError } = await supabase
     .from('psychologists')
     .select('user_id')
     .eq('id', psychologistId)
     .single();
 
-  if (userError) {
-    throw new Error('Gagal mendapatkan ID pengguna psikolog: ' + userError.message);
+  if (userError || !psy) {
+    throw new Error('Gagal mendapatkan ID pengguna psikolog: ' + (userError?.message || 'Tidak ditemukan'));
   }
 
-  const { error } = await supabase
-    .from('psychologists')
-    .delete()
-    .eq('id', psychologistId);
+  const userId = psy.user_id;
 
-  if (error) {
-    throw new Error('Gagal menghapus psikolog: ' + error.message);
+
+  const deleteDependencies = async () => {
+    await supabase.from('psychologists_topics').delete().eq('psychologist_id', psychologistId);
+    await supabase.from('psychologist_weekly_availabilities').delete().eq('psychologist_id', psychologistId);
+    await supabase.from('psychologist_schedules').delete().eq('psychologist_id', psychologistId);
+    await supabase.from('counselings').delete().eq('psychologist_id', psychologistId);
+    await supabase.from('conversations').delete().eq('psychologist_id', psychologistId);
+  };
+
+  try {
+    await deleteDependencies();
+
+    const { error: deletePsyError } = await supabase
+      .from('psychologists')
+      .delete()
+      .eq('id', psychologistId);
+
+    if (deletePsyError) {
+      throw new Error('Gagal menghapus psikolog: ' + deletePsyError.message);
+    }
+
+    const { error: deleteUserError } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', userId);
+
+    if (deleteUserError) {
+      throw new Error('Gagal menghapus pengguna psikolog: ' + deleteUserError.message);
+    }
+
+    return { message: 'Psikolog dan pengguna berhasil dihapus' };
+
+  } catch (err) {
+    throw new Error('❌ deletePsychologist error: ' + err.message);
   }
-
-  const { error: deleteUserError } = await supabase
-    .from('users')
-    .delete()
-    .eq('id', userId.user_id);
-
-  if (deleteUserError) {
-    throw new Error('Gagal menghapus pengguna psikolog: ' + deleteUserError.message);
-  }
-
-  return { message: 'Psikolog berhasil dihapus' };
 };
+
 
 const deleteMultiplePsychologists = async (psychologistIds) => {
   if (!Array.isArray(psychologistIds) || psychologistIds.length === 0) {
