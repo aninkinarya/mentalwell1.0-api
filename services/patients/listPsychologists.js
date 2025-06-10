@@ -88,7 +88,7 @@ const searchPsychologists = async ({ name, topics }) => {
   const formatResult = (list) =>
     list.map(p => ({
       id: p.id,
-      name: p.name || null,
+      name: p.name || '-',
       bio: p.bio,
       experience: p.experience,
       availability: p.availability,
@@ -98,53 +98,49 @@ const searchPsychologists = async ({ name, topics }) => {
       profile_image: p.profile_image || null,
     }));
 
-  let filteredAND = data;
-  if (name) {
-    const keywords = name.toLowerCase().trim().split(/\s+/);
-    filteredAND = filteredAND.filter(p =>
-      keywords.some(k => p.users?.name?.toLowerCase().includes(k))
-    );
-  }
+    let filteredAND = data;
+    if (name) {
+      const keywords = name.toLowerCase().trim().split(/\s+/);
+      filteredAND = filteredAND.filter(p =>
+        keywords.some(k => (p.name || '').toLowerCase().includes(k))
+      );
+    }
+    
+    if (topics?.length > 0) {
+      filteredAND = filteredAND.filter(p =>
+        (p.topics || []).some(t => topics.includes(t.id))
+      );
+    }
   
-  if (topics?.length > 0) {
-    filteredAND = filteredAND.filter(p =>
-      p.psychologists_topics.some(t =>
-        topics.includes(t.topic.id)
-      )
-    );
-  }
-
-  if (filteredAND.length > 0) {
+    if (filteredAND.length > 0) {
+      return {
+        message: 'Ditemukan hasil yang sesuai semua filter.',
+        result: formatResult(filteredAND),
+      };
+    }
+  
+    let filteredOR = data.filter(p => {
+      const nameMatch = name
+        ? (p.name || '').toLowerCase().includes(name.toLowerCase())
+        : false;
+      const topicMatch = topics?.length > 0
+        ? (p.topics || []).some(t => topics.includes(t.id))
+        : false;
+      return nameMatch || topicMatch;
+    });
+  
+    if (filteredOR.length > 0) {
+      return {
+        message: 'Tidak ditemukan hasil sesuai semua filter, tapi ini hasil yang mirip.',
+        result: formatResult(filteredOR),
+      };
+    }
+  
     return {
-      message: 'Ditemukan hasil yang sesuai semua filter.',
-      result: formatResult(filteredAND),
+      message: 'Tidak ditemukan psikolog yang sesuai.',
+      result: [],
     };
-  }
-
-  // Kalau hasil AND kosong, coba pakai OR
-  let filteredOR = data.filter(p => {
-    const nameMatch = name
-      ? p.users?.name?.toLowerCase().includes(name.toLowerCase())
-      : false;
-    const topicMatch = topics?.length > 0
-      ? p.psychologists_topics.some(t => topics.includes(t.topic.id))
-      : false;
-    return nameMatch || topicMatch;
-  });
-
-  if (filteredOR.length > 0) {
-    return {
-      message: 'Tidak ditemukan hasil sesuai semua filter, tapi ini hasil yang mirip.',
-      result: formatResult(filteredOR),
-    };
-  }
-
-  // Tetap kosong
-  return {
-    message: 'Tidak ditemukan psikolog yang sesuai.',
-    result: [],
   };
-};
 
 
 const selectPsychologist = async (id) => {
