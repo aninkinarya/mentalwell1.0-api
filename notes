@@ -57,14 +57,8 @@ fitur logot lupak.
 
 #DELETE DIRI SNDIRI
 
-belum tambahin register dan search psikolog dipostman:VVVVVVV
+belum tambahin register di postman
 
 belum cek changecounseling status
 
 belum cek admin - list counseling berdasarkan psikolog
-
-view db buat search psikolog [active]
-
-delete fitur itu harusnya deleet email dan phone number di users
-
-view db buat list psikolog untuk admin

@@ -103,7 +103,7 @@ const register = async ({ name, email, password, phone_number, role }) => {
 const login = async ({ email, password }) => {
     const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, password, role')
+        .select('id, password, role, name')
         .eq('email', email)
         .single();
 
@@ -123,7 +123,7 @@ const login = async ({ email, password }) => {
     const validPassword = await verifyPassword(password, userData.password);
     if (!validPassword) throw new ValidationError("Email atau password salah");
 
-    const token = generateToken({ id: userData.id, role: userData.role });
+    const token = generateToken({ id: userData.id, role: userData.role, name: userData.name });
 
     return { token };
 };
