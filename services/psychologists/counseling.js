@@ -5,7 +5,6 @@ const { calculateAge } = require('../../utils/calculateAge')
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
-const { Conversation } = require('twilio/lib/twiml/VoiceResponse');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 

@@ -369,7 +369,12 @@ const articleSchema = Joi.object({
       'string.empty': 'Konten tidak boleh kosong',
       'string.min': 'Konten minimal 50 karakter',
       'any.required': 'Konten wajib diisi',
-    })
+    }),
+
+  references: Joi.string()
+  .optional()
+
+
 });
 
 const updateArticleSchema = Joi.object({
@@ -391,7 +396,10 @@ const updateArticleSchema = Joi.object({
       'string.empty': 'Konten tidak boleh kosong',
       'string.min': 'Konten minimal 50 karakter',
       'any.required': 'Konten wajib diisi',
-    })
+    }),
+
+  references: Joi.string()
+    .optional()
 });
 
 
