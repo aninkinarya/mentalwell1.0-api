@@ -1,4 +1,4 @@
-const { createArticle, editArticle } = require('../../services/administrators/article');
+const { createArticle, editArticle, removearticle } = require('../../services/administrators/article');
 const { articleSchema, updateArticleSchema } = require('../../utils/validation')
 
 const postArticle = async (request, h) => {
@@ -75,4 +75,22 @@ const updateArticle = async (request, h) => {
     }
   };
 
-module.exports = { postArticle, updateArticle };
+const deleteArticle = async (request, h) => {
+  try {
+    const { id } = request.params;
+    const result = await removearticle(id);
+    return h.response({
+      status: 'success',
+      message: result.message
+    }).code(200);
+  } catch (err) {
+    console.error('❌ deleteArticle error:', err);
+    const statusCode = err instanceof ClientError ? err.statusCode : 500;
+    const message = err instanceof ClientError ? err.message : 'Terjadi kesalahan pada server.';
+    return h.response({
+      status: 'fail',
+      message
+    }).code(statusCode);
+  }
+};
+module.exports = { postArticle, updateArticle, deleteArticle };

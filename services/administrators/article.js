@@ -49,4 +49,16 @@ const editArticle = async (id, data, file) => {
     return updated;
   };
 
-module.exports = { createArticle, editArticle }
+const removearticle = async (id) => {
+  const { error } = await supabase
+    .from('articles')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    throw new NotFoundError('Artikel tidak ditemukan.');
+  }
+
+  return { message: 'Artikel berhasil dihapus.' };
+};
+module.exports = { createArticle, editArticle, removearticle }

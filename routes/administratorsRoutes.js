@@ -1,6 +1,6 @@
 const { path } = require('@hapi/joi/lib/errors');
 const { requireAuth, authorizeRole } =  require('../config/auth');
-const { postArticle, updateArticle } = require('../handlers/administrators/article')
+const { postArticle, updateArticle, deleteArticle } = require('../handlers/administrators/article')
 const { getSelectedCounseling, updatePaymentStatus } = require('../handlers/administrators/counseling')
 const { getAllUsersCounselings, getAPsychologistCounselings, getAPatientCounselings } = require('../handlers/administrators/counseling-list')
 const { postPsychologist, putPsychologistInfo, getPsychologistDetails } = require('../handlers/administrators/psychologist-profile');
@@ -45,6 +45,19 @@ const administratorsRoutes = [
             },
         },
         handler: updateArticle
+    },
+
+    {   
+        method: 'DELETE',
+        path: '/article/{id}',
+        options: {
+            pre: [
+                { method: requireAuth},
+                { method: authorizeRole (['admin'])},
+            ]
+        },
+        handler: deleteArticle
+
     },
 
     { // tested
