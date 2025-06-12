@@ -18,6 +18,7 @@ const autoFill = async (userId) => {
          name,
          nickname,
          birthdate,
+         email,
          phone_number,
          gender
          )
