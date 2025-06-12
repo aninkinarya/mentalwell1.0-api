@@ -46,7 +46,12 @@ const loginUser = async (request, h) => {
     return h.response({
       status: "success",
       message: "Login berhasil",
+      id: result.id,
+      name: result.name,
+      email: result.email,
+      role: result.role,
       token: result.token
+      
     }).code(200);
   } catch (err) {
     console.error('❌ loginUser error:', err);
