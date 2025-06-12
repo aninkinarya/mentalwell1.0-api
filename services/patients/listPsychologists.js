@@ -20,7 +20,8 @@ const allPsychologists = async () => {
     experience: psych.experience || null,
     availability: psych.availability,
     can_be_scheduled: psych.can_be_scheduled || false,
-    can_chat_now: psych.can_chat_now || false
+    can_chat_now: psych.can_chat_now || false,
+    topics: psych.topics || []
   }));
 
   result.sort((a, b) => {
@@ -30,6 +31,7 @@ const allPsychologists = async () => {
 
   return result;
 };
+
 
 
 const listDetailedPsychologits = async () => {
