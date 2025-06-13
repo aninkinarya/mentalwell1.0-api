@@ -93,10 +93,12 @@ const updateAvailability = async (request, h) => {
     }).code(200);
 
   } catch (err){
+    console.error('❌ Error:', err.message);
+    const statusCode = err.statusCode || 500;
     return h.response({
       status: 'fail',
       message: err.message
-    }).code(500);
+    }).code(statusCode);
   }
 }
 
