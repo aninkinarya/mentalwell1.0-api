@@ -1,5 +1,11 @@
 const { supabase } = require('../../config/database');
 const { uploadPhotoToSupabase } = require('../../config/uploadFile');
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 
 const psychologistProfile = async (psychologistId) => {
   const { data: user, error: userError } = await supabase
@@ -188,6 +194,7 @@ const changeAvailability = async (userId, availability) => {
   if (!['available', 'unavailable'].includes(cleanAvailability)) {
     throw new Error('Ketersediaan harus "available" atau "unavailable"');
   }
+
   const { data: psyData, error: psyErr } = await supabase
     .from('psychologists')
     .select(`
@@ -205,9 +212,35 @@ const changeAvailability = async (userId, availability) => {
     throw new Error('Gagal mengambil data psikolog');
   }
 
+  if (cleanAvailability === 'available') {
+    const now = dayjs().tz('Asia/Jakarta');
+    const currentDate = now.format('YYYY-MM-DD');
+    const currentTime = now.format('HH:mm');
+
+    const { data: conflict, error: conflictError } = await supabase
+      .from('counselings')
+      .select('id')
+      .eq('psychologist_id', psyData.id)
+      .eq('schedule_date', currentDate)
+      .lte('start_time', currentTime)
+      .gt('end_time', currentTime)
+      .in('payment_status', ['waiting', 'approved'])
+      .maybeSingle();
+
+    if (conflict) {
+      const error = new Error('Tidak bisa mengubah ke available. Anda masih memiliki sesi counseling yang sedang berjalan.');
+      error.statusCode = 423;
+      throw error;
+    }
+
+    if (conflictError) {
+      throw new Error('Gagal memeriksa konflik jadwal: ' + conflictError.message);
+    }
+  }
+
   const { error: updateErr } = await supabase
     .from('psychologists')
-    .update({ availability })
+    .update({ cleanAvailability })
     .eq('id', psyData.id);
 
   if (updateErr) {
