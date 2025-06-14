@@ -8,7 +8,7 @@ const timezone = require('dayjs/plugin/timezone');
 const { sendPasswordResetEmail } = require('../utils/emails/resetPassword')
 
 
-const register = async ({ name, email, password, phone_number, role }) => {
+const register = async ({ email, password, phone_number, role }) => {
     const cleanPayload = {
         email,
         phone_number,
@@ -35,11 +35,9 @@ const register = async ({ name, email, password, phone_number, role }) => {
     // buat objek
     const userRole = ['admin', 'psychologist'].includes(role) ? role : 'patient';
     const hashed = await hashPassword(password);
-
     
 
     const newUser = {
-        name: cleanPayload.name,
         email: cleanPayload.email,
         phone_number: cleanPayload.phone_number,
         password: hashed,
@@ -74,8 +72,6 @@ const register = async ({ name, email, password, phone_number, role }) => {
     }else {
         roleTable = 'patients';
     }
-
-
 
     const { error: roleTableError } = await supabase
         .from(roleTable)
@@ -170,10 +166,8 @@ const requestPasswordReset = async (email) => {
         throw new Error('Gagal membuat token reset password: ' + insertError.message);
     }
 
-    // Generate reset link
     const resetLink = `${process.env.FRONTEND_BASE_URL}/reset-password?token=${token}`;
 
-    // Send reset link to user's email (implementation depends on your email service)
     console.log(`Password reset link for ${email}: ${resetLink}`);
 
     await sendPasswordResetEmail(email, resetLink);

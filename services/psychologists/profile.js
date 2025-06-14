@@ -240,7 +240,7 @@ const changeAvailability = async (userId, availability) => {
 
   const { error: updateErr } = await supabase
     .from('psychologists')
-    .update({ cleanAvailability })
+    .update('availability', cleanAvailability)
     .eq('id', psyData.id);
 
   if (updateErr) {
