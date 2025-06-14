@@ -125,7 +125,7 @@ const changeCounselingStatus = async (counselingId, updatedStatus) => {
       .single();
 
     if (statusError) {
-        if (statusError.message.includes('No rows')) {
+        if (statusError.message.includes('multiple (or no) rows returned')) {
             throw new NotFoundError('Konseling tidak ditemukan');
         }
         throw new Error('Gagal mengambil data konseling: ' + statusError.message);
