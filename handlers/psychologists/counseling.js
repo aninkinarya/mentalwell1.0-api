@@ -55,7 +55,7 @@ const updateCounselingStatus = async (request, h) => {
         const { error } = updateCounselingStatusSchema.validate(request.payload)
 
         if(error){
-            throw new ValidationError('Status yang diunggah tidak sesuai, status hanya bisa berupa \'done\'')
+            throw new ValidationError('Status yang diunggah tidak sesuai, status hanya bisa berupa \'finished\'')
         }
 
         const updatedStatus = request.payload.status
@@ -63,7 +63,7 @@ const updateCounselingStatus = async (request, h) => {
 
         return h.response({
             status: 'success',
-            message: 'Berhasil mengubah status menjadi \'done\'',
+            message: 'Berhasil mengubah status menjadi \'finished\'',
             counseling
         }).code(200)
 

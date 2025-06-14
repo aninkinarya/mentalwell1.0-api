@@ -421,7 +421,7 @@ const updatePaymentStatusSchema = Joi.object({
 
 const updateCounselingStatusSchema = Joi.object({
   status: Joi.string()
-    .valid('Done')
+    .valid('Finished')
     .insensitive()
 })
 
