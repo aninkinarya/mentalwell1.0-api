@@ -52,7 +52,7 @@ const updateCounselingStatus = async (request, h) => {
     try{
 
         const counselingId = request.params.id
-        const { error } = updateCounselingStatusSchema.validate(request.payload.status)
+        const { error } = updateCounselingStatusSchema.validate(request.payload)
 
         if(error){
             throw new ValidationError('Status yang diunggah tidak sesuai, status hanya bisa berupa \'finished\'')
