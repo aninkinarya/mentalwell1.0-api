@@ -53,7 +53,7 @@ const updateCounselingStatuses = async () => {
     console.log(`Now: ${now.format('YYYY-MM-DD HH:mm:ss')}`);
     console.log(`Status: ${status}, Payment: ${payment_status}`);
 
-    // === 1. Auto-gagal kalau belum bayar dan udah lewat waktu ===
+    //  1. Auto fail kalau belum bayar dan udah lewat waktu 
     if (payment_status !== 'approved' && now.isAfter(start) && access_type === 'scheduled') {
       const { error: failErr } = await supabase
         .from('counselings')
@@ -82,7 +82,7 @@ const updateCounselingStatuses = async () => {
 
     }
     
-    // === 2. Otomatis mulai (on_going) kalau waktunya sudah mulai dan sudah bayar ===
+    //  2. Otomatis mulai (on_going) kalau waktunya sudah mulai dan sudah bayar 
     if (payment_status === 'approved' && status === 'waiting' && now.isSameOrAfter(start)) {
       const { error: startErr } = await supabase
         .from('counselings')
@@ -135,7 +135,7 @@ const updateCounselingStatuses = async () => {
       }
     }
 
-    // === 3. Sesi selesai → update jadi finished + akhiri conversation
+    //  3. Sesi selesai → update jadi finished + akhiri conversation
     if (status === 'on_going' && end && now.isSameOrAfter(end)) {
       const { data: convId, error: finishErr } = await supabase
         .from('counselings')

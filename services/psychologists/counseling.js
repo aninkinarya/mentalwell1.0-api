@@ -133,7 +133,7 @@ const changeCounselingStatus = async (counselingId, updatedStatus) => {
 
     const currentStatus = status.status?.toLowerCase();
 
-    if (['rejected', 'finished'].includes(currentStatus)) {
+    if (['finished'].includes(currentStatus)) {
         throw new ConflictError('Status sudah final, tidak dapat diubah kembali');
     }
     
