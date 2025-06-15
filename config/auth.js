@@ -2,30 +2,40 @@ const { verifyToken } = require('../utils/jwt')
 
 // untuk autentikasi dan beri response (ke fitur yang harus login)
 const requireAuth = (request, h) => {
-    const authHeader = request.headers.authorization;
+  const origin = request.headers.origin || '*'; // fallback ke * kalau ga ada origin
+  const authHeader = request.headers.authorization;
 
-    if (!authHeader) {
-        return h.response({
-            status: "fail",
-            code: 401,
-            message: "Anda harus login untuk mengakses halaman ini."
-        }).type('application/json').code(401).takeover();
-    }
+  if (!authHeader) {
+      return h.response({
+          status: "fail",
+          code: 401,
+          message: "Anda harus login untuk mengakses halaman ini."
+      })
+      .header('Access-Control-Allow-Origin', origin)
+      .header('Access-Control-Allow-Credentials', 'true')
+      .type('application/json')
+      .code(401)
+      .takeover();
+  }
 
-    const token = authHeader.split(' ')[1]; 
-    const user = verifyToken(token);
+  const token = authHeader.split(' ')[1]; 
+  const user = verifyToken(token);
 
-    if (!user) {
-        return h.response({
-            status: "fail",
-            code: 401,
-            message: "Sesi Anda telah habis atau token tidak valid. Silakan login ulang."
-        }).type('application/json').code(401).takeover();
-        
-    }
+  if (!user) {
+      return h.response({
+          status: "fail",
+          code: 401,
+          message: "Sesi Anda telah habis atau token tidak valid. Silakan login ulang."
+      })
+      .header('Access-Control-Allow-Origin', origin)
+      .header('Access-Control-Allow-Credentials', 'true')
+      .type('application/json')
+      .code(401)
+      .takeover();
+  }
 
-    request.auth = { credentials: user };
-    return h.continue;
+  request.auth = { credentials: user };
+  return h.continue;
 };
 
 // untuk biar indo
