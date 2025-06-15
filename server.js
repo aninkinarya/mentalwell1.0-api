@@ -8,8 +8,8 @@ const init = async () => {
     host: '0.0.0.0',
     routes: {
       cors: {
-        origin: ['*'],
-        credentials: false
+        origin: ['https://mentalwell-10-frontend.vercel.app/'],
+        credentials: true
       },
     },
   });
