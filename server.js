@@ -10,23 +10,17 @@ const init = async () => {
       cors: {
         origin: ['https://mentalwell-10-frontend.vercel.app'],
         credentials: true,
-        additionalHeaders: ['authorization', 'content-type', 'Content-Type'],
-        additionalExposedHeaders: ['authorization']
+        headers: ['Accept', 'Content-Type', 'Authorization'],
+        exposedHeaders: ['Authorization']
       },
     },
   });
 
-  server.route({
-    method: 'OPTIONS',
-    path: '/{any*}',
-    options: {
-      cors: {
-        origin: ['https://mentalwell-10-frontend.vercel.app'],
-        credentials: true,
-        additionalHeaders: ['authorization', 'content-type', 'Content-Type']
-      }
-    },
-    handler: (request, h) => h.response().code(200)
+  server.ext('onPreAuth', (request, h) => {
+    if (request.method === 'options') {
+      return h.continue;
+    }
+    return h.continue;
   });
 
   server.route(routes);
@@ -34,8 +28,6 @@ const init = async () => {
   await server.start();
   startAutoUpdateCounselings();
   console.log(`Server berjalan pada ${server.info.uri}`);
-
 };
 
- 
 init();
