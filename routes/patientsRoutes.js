@@ -42,48 +42,24 @@ const patientRoutes = [
     { // tested
         method: 'GET',
         path: '/psychologists/list',
-        options: {
-            pre: [
-                { method: requireAuth },
-                { method: authorizeRole(['patient']) }
-            ],
-        },
         handler: getPsychologists
     },
 
     { // tested
         method: 'GET',
         path: '/psychologists',
-        options: {
-            pre: [
-                { method: requireAuth },
-                { method: authorizeRole(['patient']) }
-            ],
-        },
         handler: getDetailedPsychologists
     },
 
     {
         method: 'GET',
         path: '/psychologists/search',
-        options: {
-            pre: [
-                { method: requireAuth},
-                { method: authorizeRole(['patient'])}
-            ]
-        },
         handler: getSearchedPsychologists
     },
 
     {
         method: 'GET',
         path: '/psychologists/{id}',
-        options: {
-            pre: [
-                { method: requireAuth },
-                { method: authorizeRole(['patient'])}
-            ]
-        },
         handler: getSelectedPsychologist
     },
     
