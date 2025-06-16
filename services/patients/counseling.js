@@ -404,11 +404,6 @@ const viewCounselings = async (userId) => {
         throw new Error('Terjadi kesalahan: ' + (patientError.message || 'unknown error'))
     }
 
-    if (!patient){
-        throw new NotFoundError('Tidak ditemukan data pasien')
-    }
-
-
     const { data: counselings, error: counselingError} = await supabase
     .from('counselings')
     .select(`
@@ -448,7 +443,7 @@ const viewCounselings = async (userId) => {
             start_time: dayjs(`${counseling.schedule_date}T${counseling.start_time}`).tz('Asia/Jakarta')
         }))
         .sort((a, b) => a.start_time.diff(now) - b.start_time.diff(now))
-        .map(({ start_time, ...rest }) => rest); // Remove start_time from the final result
+        .map(({ start_time, ...rest }) => rest); 
 
     return cleanedCounselings
 

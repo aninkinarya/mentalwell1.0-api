@@ -23,7 +23,6 @@ const editProfile = async (userId, data, photoFile) => {
     payload.profile_image = uploadResult.url;
   }
 
-
   const allowedFields = ['nickname', 'name', 'email', 'phone_number', 'birthdate', 'gender', 'profile_image'];
   const safePayload = {};
   for (const key of allowedFields) {

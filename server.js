@@ -9,6 +9,7 @@ const init = async () => {
     routes: {
       cors: {
         origin: ['https://mentalwell-10-frontend.vercel.app'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         credentials: true
       },
     },

@@ -37,8 +37,6 @@ const getScheduleAvailability = async (request, h) => {
       throw new ValidationError('Parameter `date` dan `time` harus disediakan');
     }
 
-  
-
     const result = await checkScheduleAvailability(psychologistId, date, time);
 
     const response = {
