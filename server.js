@@ -16,6 +16,19 @@ const init = async () => {
     },
   });
 
+  server.route({
+    method: 'OPTIONS',
+    path: '/{any*}',
+    options: {
+      cors: {
+        origin: ['https://mentalwell-10-frontend.vercel.app'],
+        credentials: true,
+        additionalHeaders: ['authorization', 'content-type']
+      }
+    },
+    handler: (request, h) => h.response().code(200)
+  });
+
   server.route(routes);
 
   await server.start();
