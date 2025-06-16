@@ -126,7 +126,7 @@ const changePaymentStatus = async (counselingId, updatedStatus, note = null) => 
         )
       ),
       psychologists (
-        id,
+        id, price,
         users (
           name, profile_image, email, phone_number
         )
@@ -199,6 +199,8 @@ const changePaymentStatus = async (counselingId, updatedStatus, note = null) => 
     counseling_id: updated.id,
     patient_id: updated.patients.id,
     patient_name: updated.patients.users.name,
+    patient_email: updated.patients.users.email,
+    patient_phone_number: updated.patients.users.phone_number,
     patient_profpic: updated.patients.users.profile_image,
     psychologist_id: updated.psychologists.id,
     psychologist_name: updated.psychologists.users.name,
@@ -207,6 +209,7 @@ const changePaymentStatus = async (counselingId, updatedStatus, note = null) => 
     schedule_time: `${updated.start_time?.slice(0, 5)}-${updated.end_time?.slice(0, 5)}`,
     payment_status: updated.payment_status,
     payment_note: updated.payment_note,
+    price: updated.psychologists.price,
     status: updated.status,
     access_type: updated.access_type,
     created_at: updated.created_at
