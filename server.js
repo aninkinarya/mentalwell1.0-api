@@ -10,7 +10,7 @@ const init = async () => {
       cors: {
         origin: ['https://mentalwell-10-frontend.vercel.app'],
         credentials: true,
-        additionalHeaders: ['authorization', 'content-type'],
+        additionalHeaders: ['authorization', 'content-type', 'Content-Type'],
         additionalExposedHeaders: ['authorization']
       },
     },
@@ -23,7 +23,7 @@ const init = async () => {
       cors: {
         origin: ['https://mentalwell-10-frontend.vercel.app'],
         credentials: true,
-        additionalHeaders: ['authorization', 'content-type']
+        additionalHeaders: ['authorization', 'content-type', 'Content-Type']
       }
     },
     handler: (request, h) => h.response().code(200)
