@@ -19,12 +19,12 @@ const selectCounseling = async (counselingId) => {
     const { data: counseling, error: counsError } = await supabase
     .from('counselings')
     .select(`*,
-        psychologists(
+        psychologists( id, price,
         users(
-        name, profile_image)),
-        patients(
+        name, profile_image, profile_image)),
+        patients(id,
         users(
-        name, profile_image))`)
+        name, profile_image, email, phone_number))`)
     .eq('id', counselingId)
     .single();
 
@@ -41,9 +41,11 @@ const selectCounseling = async (counselingId) => {
 
     const detailedCounseling = {
         id: counseling.id,
-        patient_id: counseling.patient_id,
+        patient_id: counseling.patients.id,
         patient_name: counseling.patients.users.name,
         patient_profpic: counseling.patients.users.profile_image,
+        patient_email: counseling.patients.users.email,
+        patient_phone_number: counseling.patients.phone_number,
         psychologist_id: counseling.psychologist_id,
         psychologist_name: counseling.psychologists.users.name,
         psychologist_profpic: counseling.psychologists.users.profile_image,
