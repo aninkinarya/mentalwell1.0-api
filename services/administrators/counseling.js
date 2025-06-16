@@ -52,6 +52,7 @@ const selectCounseling = async (counselingId) => {
         schedule_date: counseling.schedule_date,
         schedule_time: counseling.start_time.slice(0, 5) + '-' + counseling.end_time.slice(0, 5),
         status: counseling.status,
+        price: counseling.psychologists.price,
         payment_status: counseling.payment_status,
         payment_proof: counseling.payment_proof,
         payment_note: counseling.payment_note,
