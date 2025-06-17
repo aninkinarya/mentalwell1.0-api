@@ -131,6 +131,16 @@ const editProfileSchema = Joi.object({
     .valid('Laki-laki', 'Perempuan', 'Lainnya')
     .insensitive()
     .optional(),
+
+    password: Joi.string()
+    .pattern(new RegExp("^(?=.*[a-zA-Z])(?=.*[0-9])"))
+    .min(8)
+    .opsional()
+    .allow('')
+    .messages({
+      'string.pattern.base': "Kata sandi harus mengandung huruf dan angka",
+      'string.min': 'Kata sandi harus memiliki setidaknya {#limit} karakter',
+    }),
   });
 
 const editPsychologistProfileSchema = Joi.object({

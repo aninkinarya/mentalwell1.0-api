@@ -26,7 +26,7 @@ const patientRoutes = [
         options: {
             pre: [
                 { method: requireAuth },
-                { method: authorizeRole(['patient']) }
+                { method: authorizeRole(['patient', 'admin']) }
             ],
             payload: {
                 maxBytes: 1048576 * 5,

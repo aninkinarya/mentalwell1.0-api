@@ -9,7 +9,7 @@ const updateProfile = async (request, h) => {
 
     const file = payload.profile_image?._data ? payload.profile_image : null;
 
-    const allowedFields = ['nickname', 'name', 'email', 'phone_number', 'birthdate', 'gender'];
+    const allowedFields = ['nickname', 'name', 'email', 'phone_number', 'birthdate', 'gender', 'password'];
     const plainPayload = {};
     for (const key of allowedFields) {
       if (payload[key] !== undefined) {

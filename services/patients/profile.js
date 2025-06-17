@@ -1,5 +1,6 @@
 const { supabase } = require('../../config/database');
 const { uploadPhotoToSupabase } = require('../../config/uploadFile');
+const { hashPassword } = require('../../utils/password')
 
 const userProfile = async (userId) => {
   const { data: user, error} = await supabase
@@ -23,7 +24,11 @@ const editProfile = async (userId, data, photoFile) => {
     payload.profile_image = uploadResult.url;
   }
 
-  const allowedFields = ['nickname', 'name', 'email', 'phone_number', 'birthdate', 'gender', 'profile_image'];
+  if (payload.password) {
+    payload.password = await hashPassword(payload.password);
+  }
+
+  const allowedFields = ['nickname', 'name', 'email', 'phone_number', 'birthdate', 'gender', 'profile_image', 'password'];
   const safePayload = {};
   for (const key of allowedFields) {
     if (payload[key] !== undefined) safePayload[key] = payload[key];
