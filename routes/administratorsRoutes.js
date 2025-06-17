@@ -153,7 +153,7 @@ const administratorsRoutes = [
 
     { 
         method: 'PUT',
-        path: '/admin/psychologist/{id}',
+        path: '/admin/psychologists/{id}',
         options: {
             pre: [
                 { method: requireAuth},
