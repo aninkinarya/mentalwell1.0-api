@@ -47,7 +47,10 @@ const postPsychologist = async (request, h) => {
     try {
         const userId = request.auth.credentials.id;
         const payload = request.payload;
-        const file = payload.profile_image._data ? payload.profile_image : null;
+        const file = payload.profile_image && payload.profile_image._data
+        ? payload.profile_image
+        : null;
+
     
         const result = await editPsychologist(userId, payload, file);
     
