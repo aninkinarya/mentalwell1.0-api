@@ -2,6 +2,10 @@ const { verifyToken } = require('../utils/jwt')
 
 // untuk autentikasi dan beri response (ke fitur yang harus login)
 const requireAuth = (request, h) => {
+  if (request.method === 'options') {
+    return h.response().code(200).takeover(); // biarkan lolos
+  }
+  
   const origin = request.headers.origin || '*'; // fallback ke * kalau ga ada origin
   const authHeader = request.headers.authorization;
 
