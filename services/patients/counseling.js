@@ -480,10 +480,6 @@ const selectCounseling = async (counselingId) => {
         throw new Error('Terjadi kesalahan: ' + (counsError.message || 'unknown error'))
     }
 
-    if (!counseling){
-        throw new NotFoundError('Tidak ditemukan data konseling')
-    }
-
     const detailedCounseling = {
         id: counseling.id,
         conversation_id: counseling.conversation_id,

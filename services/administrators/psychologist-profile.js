@@ -53,8 +53,8 @@ const addPsychologist = async (userData, psychologistData, topics = [], schedule
         bio,
         experience,
         price,
-        availability: 'unavailable', // Default availability
-        created_at: user.created_at // Use created_at from the user table
+        availability: 'unavailable', 
+        created_at: user.created_at 
       })
       .select('*')
       .single();
@@ -305,7 +305,6 @@ const updateUserInfo = async (userId, data, file) => {
   };
   
   const editPsychologist = async (userId, userData, profileImageFile) => {
-    const psychologistId = await getPsychologistId(userId);
     const updatedUser = await updateUserInfo(userId, userData, profileImageFile);
     const updatedPsy = await updatePsychologistInfo(userId, userData);
   
