@@ -93,7 +93,7 @@ const administratorsRoutes = [
 
     {//tested
         method: 'GET',
-        path: '/admin/psychologist/{id}',
+        path: '/admin/psychologists/{id}',
         options: {
             pre: [
                 { method: requireAuth},
@@ -183,7 +183,7 @@ const administratorsRoutes = [
 
     {
         method: 'GET',
-        path: '/admin/counselings/psychologists/{id}',
+        path: '/admin/counselings/psychologist/{id}',
         options: {
             pre: [
                 { method: requireAuth},
