@@ -329,6 +329,9 @@ const editPsychologist = async (psychologistId, userData, profileImageFile) => {
   if (error || !psychologist) throw new Error('Psikolog tidak ditemukan');
   const userId = psychologist.user_id;
 
+  console.log('📦 Final updateUser payload:', updateUser);
+
+
   const updatedUser = await updateUserInfo(userId, userData, profileImageFile);
   const updatedPsy = await updatePsychologistInfo(userId, userData);
 
