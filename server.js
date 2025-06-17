@@ -16,6 +16,14 @@ const init = async () => {
     },
   });
 
+  server.route({
+    method: 'OPTIONS',
+    path: '/{any*}',
+    handler: (request, h) => {
+      return h.response().code(200);
+    },
+  });
+
   server.ext('onPreAuth', (request, h) => {
     if (request.method === 'options') {
       return h.continue;
