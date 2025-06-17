@@ -302,19 +302,6 @@ const updatePsychologistSchedules = async (psychologistId, schedules) => {
 };
 
 const editPsychologist = async (psychologistId, userData, profileImageFile) => {
-
-  const { data: psychologist, error } = await supabase
-    .from('psychologists')
-    .select('user_id')
-    .eq('id', psychologistId)
-    .single();
-
-  if (error || !psychologist) throw new Error('Psikolog tidak ditemukan');
-  const userId = psychologist.user_id;
-
-  const updatedUser = await updateUserInfo(userId, userData, profileImageFile);
-  const updatedPsy = await updatePsychologistInfo(userId, userData);
-
   if (typeof userData.topics === 'string') {
     try {
     userData.topics = JSON.parse(userData.topics);
@@ -332,6 +319,19 @@ const editPsychologist = async (psychologistId, userData, profileImageFile) => {
       userData.schedules = [];
    }
   }
+
+  const { data: psychologist, error } = await supabase
+    .from('psychologists')
+    .select('user_id')
+    .eq('id', psychologistId)
+    .single();
+
+  if (error || !psychologist) throw new Error('Psikolog tidak ditemukan');
+  const userId = psychologist.user_id;
+
+  const updatedUser = await updateUserInfo(userId, userData, profileImageFile);
+  const updatedPsy = await updatePsychologistInfo(userId, userData);
+
 
   let updatedTopics = [];
   if (Array.isArray(userData.topics)) {
