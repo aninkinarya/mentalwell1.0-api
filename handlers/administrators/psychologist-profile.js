@@ -45,7 +45,7 @@ const postPsychologist = async (request, h) => {
 
   const putPsychologistInfo = async (request, h) => {
     try {
-        const userId = request.auth.credentials.id;
+        const userId = request.params.id;
         const payload = request.payload;
         const file = payload.profile_image && payload.profile_image._data
         ? payload.profile_image
