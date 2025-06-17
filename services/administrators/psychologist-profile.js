@@ -313,6 +313,24 @@ const editPsychologist = async (psychologistId, userData, profileImageFile) => {
   const updatedUser = await updateUserInfo(userId, userData, profileImageFile);
   const updatedPsy = await updatePsychologistInfo(userId, userData);
 
+  if (typeof userData.topics === 'string') {
+    try {
+    userData.topics = JSON.parse(userData.topics);
+    } catch (e) {
+      console.warn('❗️Failed to parse topics:', userData.topics);
+      userData.topics = [];
+    }
+  }
+
+  if (typeof userData.schedules === 'string') {
+   try {
+      userData.schedules = JSON.parse(userData.schedules);
+    } catch (e) {
+      console.warn('❗️Failed to parse schedules:', userData.schedules);
+      userData.schedules = [];
+   }
+  }
+
   let updatedTopics = [];
   if (Array.isArray(userData.topics)) {
     updatedTopics = await updatePsychologistTopics(psychologistId, userData.topics);
