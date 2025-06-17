@@ -15,7 +15,7 @@ const patientRoutes = [
         options: {
             pre: [
                 { method: requireAuth },
-                { method: authorizeRole(['patient']) }],
+                { method: authorizeRole(['patient', 'admin']) }],
             },
         handler: getUserProfile
     },
