@@ -248,7 +248,8 @@ const updatePsychologistSchedules = async (psychologistId, schedules) => {
 
     if (weekly.length > 0) {
       const formattedWeekly = weekly.map(s => {
-        const [start_time, end_time] = s.time.split('-').map(t => t.trim());
+        const start_time = s.start_time || s.time?.split('-')[0]?.trim();
+        const end_time = s.end_time || s.time?.split('-')[1]?.trim();
         return {
           psychologist_id: psychologistId,
           day: s.day,
@@ -271,7 +272,8 @@ const updatePsychologistSchedules = async (psychologistId, schedules) => {
 
     if (custom.length > 0) {
       const formattedCustom = custom.map(s => {
-        const [start_time, end_time] = s.time.split('-').map(t => t.trim());
+        const start_time = s.start_time || s.time?.split('-')[0]?.trim();
+        const end_time = s.end_time || s.time?.split('-')[1]?.trim();
         return {
           psychologist_id: psychologistId,
           date: s.date,
