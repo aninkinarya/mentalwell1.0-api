@@ -135,7 +135,7 @@ const editProfileSchema = Joi.object({
     password: Joi.string()
     .pattern(new RegExp("^(?=.*[a-zA-Z])(?=.*[0-9])"))
     .min(8)
-    .opsional()
+    .optional()
     .allow('')
     .messages({
       'string.pattern.base': "Kata sandi harus mengandung huruf dan angka",
