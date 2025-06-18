@@ -68,7 +68,10 @@ const updateCounselingStatuses = async () => {
       continue;
     }
 
-    if (payment_status !== 'approved' || 'waiting' && now.isAfter(start) && access_type === 'on_demand') {
+    if ((payment_status === 'waiting' || payment_status === 'waiting') &&
+      now.isAfter(start) &&
+      access_type === 'on_demand'
+    ) {
       const { error: failErr } = await supabase
         .from('counselings')
         .update({ status: 'failed' })
