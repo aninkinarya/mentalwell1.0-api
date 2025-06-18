@@ -184,7 +184,18 @@ const changePaymentStatus = async (counselingId, updatedStatus, note = null) => 
         if (patientPhone) {
           await sendWhatsAppPatientRejected(patientPhone, patientName, rejectionNote);
         }
-      }      
+      } 
+      
+      if(access_type == 'scheduled') {
+        const { error: deleteError } = await supabase
+        .from('booked_schedules')
+        .delete()
+        .eq('counseling_id', updated.id);
+        
+        if (deleteError) {
+            throw new Error('Gagal menghapus booked schedule: ' + deleteError.message);
+        }
+      }
   }
 
   if (lowerStatus === 'refunded') {
