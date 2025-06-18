@@ -53,7 +53,7 @@ const updateCounselingStatuses = async () => {
     console.log(`Now: ${now.format('YYYY-MM-DD HH:mm:ss')}`);
     console.log(`Status: ${status}, Payment: ${payment_status}`);
 
-    //  1. Auto fail kalau belum bayar dan udah lewat waktu 
+    //  1. Auto fail kalau belum approve dan udah lewat waktu 
     if (payment_status !== 'approved' && now.isAfter(start) && access_type === 'scheduled') {
       const { error: failErr } = await supabase
         .from('counselings')
@@ -68,7 +68,7 @@ const updateCounselingStatuses = async () => {
       continue;
     }
 
-    if ((payment_status === 'waiting' || payment_status === 'waiting') &&
+    if ((payment_status === 'waiting' || payment_status === 'approved') &&
       now.isAfter(start) &&
       access_type === 'on_demand'
     ) {
