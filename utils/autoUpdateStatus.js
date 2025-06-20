@@ -154,7 +154,7 @@ const updateCounselingStatuses = async () => {
         const { error: endConvErr } = await supabase
           .from('conversations')
           .update({ status: 'closed' })
-          .eq('id', convId.id)
+          .eq('id', convId.conversation_id)
           .eq('status', 'active');
 
         if (endConvErr) {
