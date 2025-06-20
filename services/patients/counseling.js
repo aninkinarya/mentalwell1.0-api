@@ -416,7 +416,7 @@ const viewCounselings = async (userId) => {
         created_at,
         psychologists (
             users (
-
+            
                 name,
                 profile_image
             )

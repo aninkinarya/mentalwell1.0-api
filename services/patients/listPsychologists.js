@@ -42,6 +42,7 @@ const listDetailedPsychologits = async () => {
     bio,
     experience,
     availability,
+    price,
     users (
       name,
       profile_image,
@@ -64,6 +65,7 @@ const formatted = data.map(psych => {
     name: psych.users?.name || null,
     bio: psych.bio,
     experience: psych.experience,
+    price: psych.price,
     age: psych.users?.birthdate
       ? calculateAge(psych.users.birthdate)
       : null,
@@ -154,6 +156,7 @@ const selectPsychologist = async (id) => {
       bio,
       experience,
       availability,
+      price,
       users (
         name,
         profile_image,
@@ -185,7 +188,7 @@ const selectPsychologist = async (id) => {
   
   const { data: patientsData, error: patientsError } = await supabase
     .from('patients')
-    .select('id, users (id, name)')
+    .select('id, users (id, name, profile_image)')
     .in('id', patientIds);
 
   if (patientsError) throw new Error('Gagal ambil data pasien: ' + patientsError.message);
@@ -206,6 +209,7 @@ const selectPsychologist = async (id) => {
       return {
         id: user.id,
         patient: user.name,
+        profpic : user.profile_image,
         review: c.review
       };
     });
@@ -216,6 +220,7 @@ const selectPsychologist = async (id) => {
     bio: data.bio || null,
     experience: data.experience || null,
     availability: data.availability,
+    price: data.price,
     age: data.users?.birthdate 
       ? calculateAge(data.users.birthdate)
       : null,
