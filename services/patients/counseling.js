@@ -464,10 +464,10 @@ const selectCounseling = async (counselingId) => {
         review,
         conversation_id,
         psychologists (
+            price,
             users (
                 name,
-                profile_image,
-                price
+                profile_image
             )
         )
     `)
@@ -486,7 +486,7 @@ const selectCounseling = async (counselingId) => {
         conversation_id: counseling.conversation_id,
         psychologist_name: counseling.psychologists.users.name,
         psychologist_profpic: counseling.psychologists.users.profile_image,
-        price: counseling.psychologists.users.price,
+        price: counseling.psychologists.price,
         schedule_date: counseling.schedule_date,
         schedule_time: counseling.start_time.slice(0, 5) + '-' + counseling.end_time.slice(0, 5),
         status: counseling.status,
