@@ -144,14 +144,15 @@ const updateCounselingStatuses = async () => {
         .from('counselings')
         .update({ status: 'finished' })
         .eq('id', id)
-        .select('conversation_id');
+        .select('conversation_id')
+        .single();
 
       if (finishErr) {
         console.error('❌ Gagal update ke finished:', finishErr.message);
       } else {
         console.log(`✅ Counseling ID ${id} → status updated to 'finished'`);
 
-        const { error: endConvErr } = await supabase
+        const { data: convUpdated, error: endConvErr } = await supabase
           .from('conversations')
           .update({ status: 'closed' })
           .eq('id', convId.conversation_id)
@@ -162,6 +163,8 @@ const updateCounselingStatuses = async () => {
         } else {
           console.log(`💬 Conversation counseling ID ${id} diakhiri.`);
         }
+
+        console.log('Updated conversation:', convUpdated);
       }
     }
   }
