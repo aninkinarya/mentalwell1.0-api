@@ -19,7 +19,7 @@ const selectCounseling = async (counselingId) => {
     const { data: counseling, error: counsError } = await supabase
     .from('counselings')
     .select(`*,
-        psychologists( id, price,
+        psychologists( id,
         users(
         name, profile_image, profile_image)),
         patients(id,
@@ -52,7 +52,7 @@ const selectCounseling = async (counselingId) => {
         schedule_date: counseling.schedule_date,
         schedule_time: counseling.start_time.slice(0, 5) + '-' + counseling.end_time.slice(0, 5),
         status: counseling.status,
-        price: counseling.psychologists.price,
+        price: counseling.price,
         payment_status: counseling.payment_status,
         payment_proof: counseling.payment_proof,
         payment_note: counseling.payment_note,
@@ -119,6 +119,7 @@ const changePaymentStatus = async (counselingId, updatedStatus, note = null) => 
       end_time,
       access_type,
       status,
+      price,
       payment_status,
       payment_note,
       payment_proof,
@@ -237,7 +238,7 @@ const changePaymentStatus = async (counselingId, updatedStatus, note = null) => 
     schedule_time: `${updated.start_time?.slice(0, 5)}-${updated.end_time?.slice(0, 5)}`,
     payment_status: updated.payment_status,
     payment_note: updated.payment_note,
-    price: updated.psychologists.price,
+    price: updated.price,
     status: updated.status,
     access_type: updated.access_type,
     created_at: updated.created_at

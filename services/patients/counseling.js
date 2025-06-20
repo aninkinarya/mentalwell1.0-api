@@ -193,6 +193,7 @@ const chatNowCounseling = async (userId, psychologistId, counselingData, payment
       .select(`
         id,
         availability,
+        price,
         users (name)
       `)
       .eq('id', psychologistId)
@@ -238,6 +239,7 @@ const chatNowCounseling = async (userId, psychologistId, counselingData, payment
       problem_description: counselingData.problem_description,
       hope_after: counselingData.hope_after,
       status: failedReason ? 'failed' : 'waiting',
+      price: psychologist.price,
       payment_proof: paymentProofUrl,
       payment_status: 'waiting',
       access_type: 'on_demand',
@@ -250,7 +252,7 @@ const chatNowCounseling = async (userId, psychologistId, counselingData, payment
     const { data: inserted, error: insertError } = await supabase
       .from('counselings')
       .insert(counselingPayload)
-      .select('id, status, payment_status, payment_note, created_at')
+      .select('id, status, price, payment_status, payment_note, created_at')
       .single();
   
     if (insertError) {
@@ -264,6 +266,7 @@ const chatNowCounseling = async (userId, psychologistId, counselingData, payment
       phone_number: patient.users.phone_number,
       gender: patient.users.gender,
       psychologist_name: psychologist.users.name,
+      price: inserted.price,
       counseling_id: inserted.id,
       occupation: counselingData.occupation,
       problem_description: counselingData.problem_description,
@@ -310,7 +313,7 @@ const chatNowCounseling = async (userId, psychologistId, counselingData, payment
     
     const { data: psychologist, error: psyError } = await supabase
       .from('psychologists')
-      .select(`id, users (name)`)
+      .select(`id, price, users (name)`)
       .eq('id', psychologistId)
       .single();
     if (psyError || !psychologist) throw new NotFoundError('Psikolog tidak ditemukan');
@@ -333,6 +336,7 @@ const chatNowCounseling = async (userId, psychologistId, counselingData, payment
       .insert({
         patient_id: patient.id,
         psychologist_id: psychologist.id,
+        price: psychologist.price,
         schedule_date,
         start_time: startTime,
         end_time: endTime,
@@ -345,7 +349,7 @@ const chatNowCounseling = async (userId, psychologistId, counselingData, payment
         access_type: 'scheduled',
         payment_note: failedReason ? `${failedReason} Admin akan meninjau pembayaran Anda.` : null,
       })
-      .select('id, schedule_date, start_time, end_time, status, payment_status, payment_note, created_at')
+      .select('id, price, schedule_date, start_time, end_time, status, payment_status, payment_note, created_at')
       .single();
   
     if (insertError) throw new Error('Gagal membuat sesi konseling terjadwal: ' + insertError.message);
@@ -371,6 +375,7 @@ const chatNowCounseling = async (userId, psychologistId, counselingData, payment
       phone_number: patient.users.phone_number,
       gender: patient.users.gender,
       psychologist_name: psychologist.users.name,
+      price: inserted.price,
       counseling_id: inserted.id,
       schedule_date: inserted.schedule_date,
       schedule_time: `${inserted.start_time.slice(0, 5)}-${inserted.end_time.slice(0, 5)}`,
@@ -458,6 +463,7 @@ const selectCounseling = async (counselingId) => {
         start_time,
         end_time,
         status,
+        price,
         payment_status,
         payment_note,
         created_at,
@@ -486,7 +492,7 @@ const selectCounseling = async (counselingId) => {
         conversation_id: counseling.conversation_id,
         psychologist_name: counseling.psychologists.users.name,
         psychologist_profpic: counseling.psychologists.users.profile_image,
-        price: counseling.psychologists.price,
+        price: counseling.price,
         schedule_date: counseling.schedule_date,
         schedule_time: counseling.start_time.slice(0, 5) + '-' + counseling.end_time.slice(0, 5),
         status: counseling.status,
