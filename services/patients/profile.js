@@ -16,6 +16,24 @@ return user;
 const editProfile = async (userId, data, photoFile) => {
   const payload = { ...data };
 
+  const { data: currentUser, error: fetchError } = await supabase
+    .from('users')
+    .select('profile_image')
+    .eq('id', userId)
+    .single();
+
+  if (fetchError) throw new Error(`Gagal mengambil data pengguna: ${fetchError.message}`);
+
+  if (currentUser.profile_image) {
+    const oldFilePath = currentUser.profile_image.split('/').pop();
+    const { error: deleteError } = await supabase.storage
+      .from('mentalwell-bucket') 
+      .remove([`profile_images/${oldFilePath}`]); 
+    if (deleteError) {
+      console.warn(`Gagal menghapus foto lama: ${deleteError.message}`);
+    }
+  }
+
   if (photoFile) {
     const uploadResult = await uploadPhotoToSupabase({file: photoFile, folder: 'profile_images', prefix: userId});
     if (!uploadResult.success) {
