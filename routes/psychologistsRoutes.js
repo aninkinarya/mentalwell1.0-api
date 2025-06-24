@@ -23,7 +23,7 @@ const psychologistRoutes = [
                 { method: authorizeRole(['psychologist']) }
             ],
             payload: {
-                maxBytes: 1048576 * 5,
+                maxBytes: 1048576 * 2,
                 output: 'stream',
                 parse: true,
                 multipart: true,

@@ -29,7 +29,7 @@ const patientRoutes = [
                 { method: authorizeRole(['patient', 'admin']) }
             ],
             payload: {
-                maxBytes: 1048576 * 5,
+                maxBytes: 1048576 * 2,
                 output: 'stream',
                 parse: true,
                 multipart: true,
@@ -109,7 +109,7 @@ const patientRoutes = [
                 { method: authorizeRole(['patient'])}
             ],
             payload: {
-                maxBytes: 1048576 * 5,
+                maxBytes: 1048576 * 2,
                 output: 'stream',
                 parse: true,
                 multipart: true,
@@ -129,7 +129,7 @@ const patientRoutes = [
                 { method: authorizeRole(['patient'])}
             ],
             payload: {
-                maxBytes: 1048576 * 5,
+                maxBytes: 1048576 * 2,
                 output: 'stream',
                 parse: true,
                 multipart: true,

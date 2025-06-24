@@ -20,6 +20,7 @@ const administratorsRoutes = [
                 { method: authorizeRole (['admin'])},
             ],
             payload: {
+                maxBytes: 1048576 * 2,
                 output: 'stream',
                 parse: true,
                 multipart: true,
@@ -38,6 +39,7 @@ const administratorsRoutes = [
                 { method: authorizeRole (['admin'])},
             ],
             payload: {
+                maxBytes: 1048576 * 2,
                 output: 'stream',
                 parse: true,
                 multipart: true,
@@ -69,7 +71,7 @@ const administratorsRoutes = [
                 { method: authorizeRole (['admin'])},
             ],
             payload: {
-                maxBytes: 1048576 * 5, // 5 MB
+                maxBytes: 1048576 * 2,
                 output: 'stream',
                 parse: true,
                 multipart: true,
