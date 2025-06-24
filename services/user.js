@@ -166,7 +166,7 @@ const requestPasswordReset = async (email) => {
         throw new Error('Gagal membuat token reset password: ' + insertError.message);
     }
 
-    const resetLink = `${process.env.FRONTEND_BASE_URL}/reset-password?token=${token}`;
+    const resetLink = `${process.env.FRONTEND_BASE_URL}/ubah-sandi?token=${token}`;
 
     console.log(`Password reset link for ${email}: ${resetLink}`);
 
