@@ -217,6 +217,31 @@ const changePaymentStatus = async (counselingId, updatedStatus, note = null) => 
     const patientEmail = updated.patients.users.email;
     const patientName = updated.patients.users.name;
     const patientPhone = updated.patients.users.phone_number;
+
+    if (updated.access_type === 'scheduled') {
+      const { data: bookedSchedule, error: selectError } = await supabase
+        .from('booked_schedules')
+        .select('id')
+        .eq('counseling_id', updated.id)
+        .maybeSingle();
+
+      if (selectError) {
+        throw new Error('Gagal memeriksa booked schedule: ' + selectError.message);
+      }
+
+      if (bookedSchedule) {
+        const { error: deleteError } = await supabase
+          .from('booked_schedules')
+          .delete()
+          .eq('counseling_id', updated.id);
+
+        if (deleteError) {
+          throw new Error('Gagal menghapus booked schedule: ' + deleteError.message);
+        }
+      } else {
+        console.warn(`No booked schedule found for counseling_id: ${updated.id}`);
+      }
+    }
   
     await sendPatientRefundedEmail(patientEmail, patientName);
     if (patientPhone) {
