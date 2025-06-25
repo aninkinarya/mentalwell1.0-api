@@ -7,7 +7,6 @@ const isSameOrAfter = require('dayjs/plugin/isSameOrAfter.js');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isSameOrAfter);
-dayjs.extend(timezone);
 
 const updateCounselingStatuses = async () => {
   const now = dayjs().utc().tz('Asia/Jakarta');
@@ -179,8 +178,7 @@ const updateCounselingStatuses = async () => {
         console.log('Updated conversation:', convUpdated);
       }
     }
-  }
-};
+  };
 
 const startAutoUpdateCounselings = () => {
   updateCounselingStatuses();
