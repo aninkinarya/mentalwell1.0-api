@@ -4,7 +4,7 @@ const timezone = require('dayjs/plugin/timezone');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const supabase = require('../config/database')
+const { supabase } = require('../config/database')
 
 const TIMEZONE = 'Asia/Jakarta';
 
