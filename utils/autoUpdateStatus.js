@@ -98,6 +98,18 @@ const updateCounselingStatuses = async () => {
         console.log(`✅ Counseling ID ${id} → status updated to 'on_going'`);
       }
 
+      const { error: updateAvailError } = await supabase
+      .from('psychologists')
+      .update({ availability: 'unavailable' })
+      .eq('id', psychologist_id); 
+
+     if (updateAvailError) {
+        console.error('❌ Gagal update availability psikolog:', updateAvailError.message);
+     } else {
+        console.log(`🔒 Availability psikolog ${psychologist_id} diubah menjadi 'unavailable'`);
+     }
+    }
+
       // Buat conversation kalau belum ada
       const { data: convExist, error: convCheckErr } = await supabase
         .from('conversations')
