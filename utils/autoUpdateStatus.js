@@ -1,188 +1,126 @@
 const dayjs = require('dayjs');
-const { supabase } = require('../config/database.js');
-const utc = require('dayjs/plugin/utc.js');
-const timezone = require('dayjs/plugin/timezone.js');
-const isSameOrAfter = require('dayjs/plugin/isSameOrAfter.js');
-
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
 dayjs.extend(utc);
 dayjs.extend(timezone);
-dayjs.extend(isSameOrAfter);
 
-const updateCounselingStatuses = async () => {
-  const now = dayjs().utc().tz('Asia/Jakarta');
-  console.log('🔄 Checking counseling statuses at', now.format('YYYY-MM-DD HH:mm:ss'));
+const supabase = require('../config/database')
+
+const TIMEZONE = 'Asia/Jakarta';
+
+async function handleFailed(counseling, now) {
+  const { id, start_time, schedule_date, payment_status, access_type } = counseling;
+  const start = dayjs.tz(`${schedule_date}T${start_time}`, TIMEZONE);
+
+  if (!start.isValid() || now.isBefore(start)) return;
+
+  const isFailedScheduled = access_type === 'scheduled' && payment_status !== 'approved';
+  const isFailedOnDemand = access_type === 'on_demand' && !['waiting', 'approved'].includes(payment_status);
+
+  if (isFailedScheduled || isFailedOnDemand) {
+    try {
+      await supabase.from('counselings').update({ status: 'failed' }).eq('id', id);
+      console.log(`⛔ Counseling ID ${id} gagal karena pembayaran tidak valid.`);
+    } catch (err) {
+      console.error(`❌ Gagal update failed untuk ID ${id}:`, err.message);
+    }
+  }
+}
+
+async function handleStart(counseling, now) {
+  const {
+    id, status, payment_status,
+    start_time, schedule_date,
+    psychologist_id, patient_id,
+  } = counseling;
+
+  if (!(status === 'waiting' && payment_status === 'approved')) return;
+
+  const start = dayjs.tz(`${schedule_date}T${start_time}`, TIMEZONE);
+  if (!start.isValid() || now.isBefore(start)) return;
+
+  try {
+    await supabase.from('counselings').update({ status: 'on_going' }).eq('id', id);
+    await supabase.from('psychologists').update({ availability: 'unavailable' }).eq('id', psychologist_id);
+    console.log(`▶️ Counseling ID ${id} dimulai otomatis.`);
+
+    const { data: existingConv } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('patient_id', patient_id)
+      .eq('psychologist_id', psychologist_id)
+      .eq('status', 'active')
+      .maybeSingle();
+
+    if (!existingConv) {
+      const { data: newConv } = await supabase
+        .from('conversations')
+        .insert({ patient_id, psychologist_id, status: 'active' })
+        .select('id')
+        .single();
+
+      await supabase.from('counselings').update({ conversation_id: newConv.id }).eq('id', id);
+      console.log(`💬 Conversation dibuat untuk counseling ID ${id}`);
+    }
+  } catch (err) {
+    console.error(`❌ Gagal memulai counseling ID ${id}:`, err.message);
+  }
+}
+
+async function handleFinish(counseling, now) {
+  const { id, status, end_time, schedule_date, psychologist_id } = counseling;
+
+  if (status !== 'on_going' || !end_time) return;
+
+  const end = dayjs.tz(`${schedule_date}T${end_time}`, TIMEZONE);
+  if (!end.isValid() || now.isBefore(end)) return;
+
+  try {
+    const { data } = await supabase
+      .from('counselings')
+      .update({ status: 'finished' })
+      .eq('id', id)
+      .select('conversation_id')
+      .single();
+
+    await supabase.from('psychologists').update({ availability: 'available' }).eq('id', psychologist_id);
+    await supabase.from('conversations').update({ status: 'closed' }).eq('id', data.conversation_id);
+    console.log(`✅ Counseling ID ${id} selesai, conversation ditutup.`);
+  } catch (err) {
+    console.error(`❌ Gagal menyelesaikan counseling ID ${id}:`, err.message);
+  }
+}
+
+async function updateCounselingStatuses() {
+  const now = dayjs.tz(new Date(), TIMEZONE);
 
   const { data: counselings, error } = await supabase
     .from('counselings')
-    .select('id, schedule_date, start_time, end_time, status, payment_status, patient_id, psychologist_id');
+    .select('*')
+    .in('status', ['waiting', 'on_going']);
 
   if (error) {
-    console.error('❌ Gagal mengambil data konseling:', error.message);
+    console.error('❌ Gagal mengambil data counseling:', error.message);
     return;
   }
 
   for (const counseling of counselings) {
-    const {
-      id,
-      schedule_date,
-      start_time,
-      end_time,
-      status,
-      payment_status,
-      patient_id,
-      psychologist_id,
-      access_type
-    } = counseling;
+    const { id, schedule_date, start_time } = counseling;
 
     if (!schedule_date || !start_time) {
       console.warn(`⚠️ Counseling ID ${id} tidak punya jadwal lengkap, dilewati.`);
       continue;
     }
 
-    const start = dayjs.tz(`${schedule_date}T${start_time}`, 'Asia/Jakarta');
-    const end = end_time ? dayjs.tz(`${schedule_date}T${end_time}`, 'Asia/Jakarta') : null;
+    await handleFailed(counseling, now);
+    await handleStart(counseling, now);
+    await handleFinish(counseling, now);
+  }
+}
 
-    if (!start.isValid() || (end_time && !end.isValid())) {
-      console.warn(`⚠️ Counseling ID ${id} punya waktu tidak valid, dilewati.`);
-      continue;
-    }
-
-    console.log(`\n🔎 Counseling ID ${id}`);
-    console.log(`Start: ${start.format('YYYY-MM-DD HH:mm:ss')}, End: ${end ? end.format('HH:mm:ss') : '-'}`);
-    console.log(`Now: ${now.format('YYYY-MM-DD HH:mm:ss')}`);
-    console.log(`Status: ${status}, Payment: ${payment_status}`);
-
-    //  1. Auto fail kalau belum approve dan udah lewat waktu 
-    if (payment_status !== 'approved' && now.isAfter(start) && access_type === 'scheduled') {
-      const { error: failErr } = await supabase
-        .from('counselings')
-        .update({ status: 'failed' })
-        .eq('id', id);
-
-      if (failErr) {
-        console.error('❌ Gagal set status failed:', failErr.message);
-      } else {
-        console.log(`❌ Counseling ID ${id} → status updated to 'failed'`);
-      }
-      continue;
-    }
-
-    if ((payment_status === 'waiting' || payment_status === 'approved') &&
-      now.isAfter(start) &&
-      access_type === 'on_demand'
-    ) {
-      const { error: failErr } = await supabase
-        .from('counselings')
-        .update({ status: 'failed' })
-        .eq('id', id); 
-      if (failErr) {
-        console.error('❌ Gagal set status failed untuk on_demand:', failErr.message);
-      } else {
-        console.log(`❌ Counseling ID ${id} → status updated to 'failed' (on_demand)`);
-      }
-      continue;
-
-    }
-    
-    //  2. Otomatis mulai (on_going) kalau waktunya sudah mulai dan sudah bayar 
-    if (payment_status === 'approved' && status === 'waiting' && now.isSameOrAfter(start)) {
-      const { error: startErr } = await supabase
-        .from('counselings')
-        .update({ status: 'on_going' })
-        .eq('id', id);
-
-      if (startErr) {
-        console.error('❌ Gagal update ke on_going:', startErr.message);
-      } else {
-        console.log(`✅ Counseling ID ${id} → status updated to 'on_going'`);
-      }
-
-      const { error: updateAvailError } = await supabase
-      .from('psychologists')
-      .update({ availability: 'unavailable' })
-      .eq('id', psychologist_id); 
-
-     if (updateAvailError) {
-        console.error('❌ Gagal update availability psikolog:', updateAvailError.message);
-     } else {
-        console.log(`🔒 Availability psikolog ${psychologist_id} diubah menjadi 'unavailable'`);
-     }
-    }
-
-      // Buat conversation kalau belum ada
-      const { data: convExist, error: convCheckErr } = await supabase
-        .from('conversations')
-        .select('id')
-        .eq('patient_id', patient_id)
-        .eq('psychologist_id', psychologist_id)
-        .eq('status', 'active')
-        .maybeSingle();
-
-      if (convCheckErr && convCheckErr.code !== 'PGRST116') {
-        console.error('❌ Gagal cek conversation:', convCheckErr.message);
-        continue;
-      }
-
-      if (!convExist) {
-        const { data: convId, error: convInsertErr } = await supabase
-          .from('conversations')
-          .insert({
-            patient_id,
-            psychologist_id,
-            status: 'active',
-          })
-          .select('id')
-          .single();
-
-          await supabase
-          .from('counselings')
-          .update({ conversation_id: convId.id })
-          .eq('id', id);
-
-        if (convInsertErr) {
-          console.error('❌ Gagal buat conversation:', convInsertErr.message);
-        } else {
-          console.log(`💬 Conversation dibuat untuk counseling ID ${id}`);
-        }
-      } else {
-        console.log(`ℹ️ Conversation aktif sudah ada`);
-      }
-    }
-
-    //  3. Sesi selesai → update jadi finished + akhiri conversation
-    if (status === 'on_going' && end && now.isSameOrAfter(end)) {
-      const { data: convId, error: finishErr } = await supabase
-        .from('counselings')
-        .update({ status: 'finished' })
-        .eq('id', id)
-        .select('conversation_id')
-        .single();
-
-      if (finishErr) {
-        console.error('❌ Gagal update ke finished:', finishErr.message);
-      } else {
-        console.log(`✅ Counseling ID ${id} → status updated to 'finished'`);
-
-        const { data: convUpdated, error: endConvErr } = await supabase
-          .from('conversations')
-          .update({ status: 'closed' })
-          .eq('id', convId.conversation_id)
-          .eq('status', 'active');
-
-        if (endConvErr) {
-          console.error('❌ Gagal update conversation jadi ended:', endConvErr.message);
-        } else {
-          console.log(`💬 Conversation counseling ID ${id} diakhiri.`);
-        }
-
-        console.log('Updated conversation:', convUpdated);
-      }
-    }
-  };
-
-const startAutoUpdateCounselings = () => {
+function startAutoUpdateCounselings() {
   updateCounselingStatuses();
-  setInterval(updateCounselingStatuses, 60 * 1000); // tiap 1 menit
-};
+  setInterval(updateCounselingStatuses, 60 * 1000);
+}
 
 module.exports = { startAutoUpdateCounselings };
