@@ -41,26 +41,8 @@ const patientRoutes = [
 
     { // tested
         method: 'GET',
-        path: '/psychologists/list',
-        handler: getPsychologists
-    },
-
-    { // tested
-        method: 'GET',
         path: '/psychologists',
         handler: getDetailedPsychologists
-    },
-
-    {
-        method: 'GET',
-        path: '/psychologists/search',
-        handler: getSearchedPsychologists
-    },
-
-    {
-        method: 'GET',
-        path: '/psychologists/{id}',
-        handler: getSelectedPsychologist
     },
     
     {

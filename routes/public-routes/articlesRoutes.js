@@ -1,4 +1,4 @@
-const { getArticles, getSelectedArticle, getSearchedArticles } = require('../handlers/article')
+const { getArticles, getSelectedArticle, getSearchedArticles } = require('../../handlers/article')
 
 const articleRoutes = [
 
