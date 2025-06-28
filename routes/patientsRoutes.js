@@ -1,6 +1,6 @@
 const { requireAuth, authorizeRole } = require('../config/auth');
 const { updateProfile, getUserProfile } = require('../handlers/patient/profile');
-const { getPsychologists, getDetailedPsychologists, getSearchedPsychologists, getSelectedPsychologist } = require('../handlers/patient/listPsychologists');
+const { getDetailedPsychologists } = require('../handlers/listPsychologists');
 const { getAutoFill, postChatNowCounseling, postBookScheduleCounseling, getAllCounselings, getSelectedCounseling } = require('../handlers/patient/counseling');
 const { getPsychologistSchedules, getScheduleAvailability } = require('../handlers/patient/psychologist-schedules');
 const { postReview } = require('../handlers/patient/review');

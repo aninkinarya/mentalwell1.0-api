@@ -1,4 +1,4 @@
-const { allPsychologists, listDetailedPsychologits, searchPsychologists, selectPsychologist } = require('../../services/patients/listPsychologists');
+const { allPsychologists, listDetailedPsychologits, searchPsychologists, selectPsychologist } = require('../services/listPsychologists');
 
 const getPsychologists = async (request, h) => {
     try {

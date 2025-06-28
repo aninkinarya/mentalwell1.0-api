@@ -1,4 +1,4 @@
-const { getPsychologists, getSearchedPsychologists, getSelectedPsychologist } = require('../../handlers/patient/listPsychologists');
+const { getPsychologists, getSearchedPsychologists, getSelectedPsychologist } = require('../../handlers/listPsychologists');
 
 const psychologistsListRoutes = [
     

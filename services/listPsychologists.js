@@ -1,6 +1,6 @@
-const { supabase } = require('../../config/database');
+const { supabase } = require('../config/database');
 const dayjs = require('dayjs');
-const { calculateAge } = require('../../utils/calculateAge');
+const { calculateAge } = require('../utils/calculateAge');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
 dayjs.extend(utc);
