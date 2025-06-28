@@ -1,5 +1,6 @@
-const { registerUser, loginUser, getCurrentUser, postRequestPasswordReset, postResetPassword } = require('../handlers/userHandler');
-const { requireAuth } = require('../config/auth');
+const { registerUser, loginUser, getCurrentUser, postRequestPasswordReset, postResetPassword } = require('../../handlers/userHandler');
+
+const { requireAuth } = require('../../config/auth');
   
 const authRoutes = [
     { // tested
@@ -15,14 +16,6 @@ const authRoutes = [
       handler: loginUser,
     },
     
-    {
-      method: 'GET',
-      path: '/me',
-      options: {
-        pre: [{ method: requireAuth }],
-      },
-      handler: getCurrentUser,
-    },
 
     { // tested
       method: 'POST',
@@ -34,7 +27,18 @@ const authRoutes = [
       method: 'POST',
       path: '/reset-password',
       handler: postResetPassword
-    }
+    },
+    
+
+    {
+      method: 'GET',
+      path: '/me',
+      options: {
+        pre: [{ method: requireAuth }],
+      },
+      handler: getCurrentUser,
+    },
+    
   ];
   
   module.exports = authRoutes;
