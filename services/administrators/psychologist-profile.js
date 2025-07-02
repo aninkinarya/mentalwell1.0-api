@@ -69,8 +69,6 @@ const addPsychologist = async (userData, psychologistData, topics = [], schedule
     await supabase.from('psychologists_topics').insert(topicData);
   }
 
-  console.log(schedules)
-
   let insertedTopics = [];
   if (Array.isArray(topics) && topics.length > 0) {
     const { data: topicResults } = await supabase
@@ -80,7 +78,7 @@ const addPsychologist = async (userData, psychologistData, topics = [], schedule
     insertedTopics = topicResults?.map(t => t.topics) || [];
   }
 
-  let insertedSchedules = { weekly: [], custom: [] };
+  let insertedSchedules = [];
   let weeklyData = [];
   let customData = [];
   
@@ -89,15 +87,12 @@ const addPsychologist = async (userData, psychologistData, topics = [], schedule
     const custom = schedules.filter(s => s.date && !s.day);
   
     if (weekly.length > 0) {
-      const formattedWeekly = weekly.map(s => {
-        const [start_time, end_time] = s.time.split('-').map(t => t.trim());
-        return {
-          psychologist_id: psychologist.id,
-          day: s.day,
-          start_time,
-          end_time
-        };
-      });
+      const formattedWeekly = weekly.map(s => ({
+        psychologist_id: psychologist.id,
+        day: s.day,
+        start_time: s.start_time,
+        end_time: s.end_time
+      }));
   
       const { data, error: insertWeeklyError } = await supabase
         .from('psychologist_weekly_availabilities')
@@ -112,15 +107,12 @@ const addPsychologist = async (userData, psychologistData, topics = [], schedule
     }
   
     if (custom.length > 0) {
-      const formattedCustom = custom.map(s => {
-        const [start_time, end_time] = s.time.split('-').map(t => t.trim());
-        return {
-          psychologist_id: psychologist.id,
-          date: s.date,
-          start_time,
-          end_time
-        };
-      });
+      const formattedCustom = custom.map(s => ({
+        psychologist_id: psychologist.id,
+        date: s.date,
+        start_time: s.start_time,
+        end_time: s.end_time
+      }));
   
       const { data, error: insertCustomError } = await supabase
         .from('psychologist_schedules')
@@ -134,7 +126,6 @@ const addPsychologist = async (userData, psychologistData, topics = [], schedule
       }
     }
   
-
     insertedSchedules = [
       ...(weeklyData || []),
       ...(customData || [])
