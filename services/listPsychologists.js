@@ -8,7 +8,10 @@ dayjs.extend(timezone);
 
 
 const allPsychologists = async () => {
-  const { data, error } = await supabase.rpc('get_all_psychologists');
+  const { data, error } = await supabase
+  .from ('psychologists_view')
+  .select('*');
+  
   if (error) throw new Error('Gagal ambil data psikolog: ' + error.message);
 
   const result = data.map(psych => ({
